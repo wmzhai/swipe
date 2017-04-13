@@ -22,9 +22,9 @@ class Deck extends Component {
       },
       onPanResponderRelease: (event, gesture) => {
         if(gesture.dx > SWIPE_THRESHOLD) {
-          this.forceSwipe('right');
+          this.forceSwipe('right')
         } else if (gesture.dx < -SWIPE_THRESHOLD) {
-          this.forceSwipe('left');
+          this.forceSwipe('left')
         } else {
           this.resetPosition()
         }        
@@ -35,7 +35,7 @@ class Deck extends Component {
   }
 
   getCardStyle() {
-    const { position } = this.state;
+    const { position } = this.state
     const rotate = position.x.interpolate({
       inputRange: [-SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5 ],
       outputRange: ['-120deg', '0deg', '120deg']
@@ -48,12 +48,18 @@ class Deck extends Component {
   }
 
   forceSwipe(direction) {
-    const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
+    const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH
 
     Animated.timing(this.state.position,{
       toValue: { x, y: 0},
       duration: SWIPE_OUT_DURATION
-    }).start()
+    }).start(() => this.onSwipeComplete(direction))
+  }
+
+  onSwipeComplete( direction ) {
+    const { onSwipeLeft, onSwipeRight } = this.props
+
+    direction === 'right' ? onSwipeRight() : onSwipeLeft()
   }
 
   resetPosition() {
